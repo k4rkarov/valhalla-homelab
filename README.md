@@ -1,5 +1,5 @@
 <h3 align="center">⚔️ VALHALLA ⚔️</h3>
-<h1 align="center"> <img src="/images/valhalla-architecture.png" alt="Valhalla architecture" width="500px"></h1>
+<h1 align="center"> <img src="/images/valhalla-architecture.png" alt="Valhalla architecture"></h1>
 
 
 
