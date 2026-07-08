@@ -1,11 +1,6 @@
 <h3 align="center">⚔️ VALHALLA ⚔️</h3>
+<p align="center">A secure, self-hosted homelab built around privacy, simplicity and complete infrastructure ownership.</p>
 <h1 align="center"> <img src="/images/valhalla-architecture.png" alt="Valhalla architecture"></h1>
-
-
-
-A secure, self-hosted homelab built around privacy, simplicity and complete infrastructure ownership.
-
-⸻
 
 ## Overview
 
@@ -22,25 +17,15 @@ Unlike traditional cloud-centric deployments, Valhalla follows a self-hosting fi
 
 The objective is to own every layer of the stack while keeping deployment, maintenance and recovery as simple as possible.
 
-⸻
-
 ## Design Philosophy
 
-Valhalla was designed around five principles.
+### 1. Privacy
 
-### Privacy
+Every critical service runs locally. Passwords, media, DNS, authentication and personal data never leave the infrastructure unless explicitly synchronized.
 
-Every critical service runs locally.
+### 2. Simplicity
 
-Passwords, media, DNS, authentication and personal data never leave the infrastructure unless explicitly synchronized.
-
-⸻
-
-### Simplicity
-
-The architecture intentionally avoids unnecessary complexity.
-
-Instead of Kubernetes, multiple virtual machines or service meshes, the project relies on:
+The architecture intentionally avoids unnecessary complexity. Instead of Kubernetes, multiple virtual machines or service meshes, the project relies on:
 
 * Debian
 * Docker Compose
@@ -50,13 +35,9 @@ Instead of Kubernetes, multiple virtual machines or service meshes, the project 
 
 This keeps maintenance predictable while remaining extremely powerful.
 
+### 3. Security
 
-
-### Security
-
-Security is based on reducing attack surface rather than exposing services behind complex firewalls.
-
-Key principles include:
+Security is based on reducing attack surface rather than exposing services behind complex firewalls. Key principles include:
 
 * No public ports
 * No port forwarding
@@ -66,19 +47,15 @@ Key principles include:
 * Strong passwords
 * SSH key authentication
 
-
-## Modularity
+## 4. Modularity
 
 Every application lives inside its own Docker container. 
 New services can be added without affecting existing ones.
 Infrastructure components remain independent.
 
+## 5. Hardware
 
-## Hardware
-
-Server Name: Valhalla
-
-### Hardware
+Very simple and minimal hardware. It could be a Raspberry Pi even. 
 
 * CHUWI LarkBox
 * Intel Celeron J4115
@@ -86,17 +63,13 @@ Server Name: Valhalla
 * 128 GB eMMC flash (system)
 * 1 TB external HDD (storage)
 
-The server runs 24/7 and hosts every self-hosted application.
-
-
 ### Operating System
+
+The host system is intentionally minimal. Every application runs inside containers.
 
 * Debian Linux
 * Docker Engine
 * Docker Compose
-
-The host system is intentionally minimal. Every application runs inside containers.
-
 
 ## High Level Architecture
 
@@ -146,27 +119,24 @@ This architecture provides:
 * secure authentication
 * zero exposed ports
 
+
 ## DNS Architecture
 
-DNS is provided by AdGuard Home.
-
-Instead of remembering IP addresses, every service has its own hostname.
+DNS is provided by AdGuard Home.Instead of remembering IP addresses, every service has its own hostname. DNS rewrites map each hostname to the Valhalla server. 
+When connected through Tailscale, the same hostnames work from anywhere in the world.
 
 Examples:
 
-homepage.valhalla
-vault.valhalla
-karkafy.valhalla
-karkaflix.valhalla
-adguard.valhalla
-portainer.valhalla
-
-DNS rewrites map each hostname to the Valhalla server. 
-When connected through Tailscale, the same hostnames work from anywhere in the world.
+* homepage.valhalla
+* vault.valhalla
+* karkafy.valhalla
+* karkaflix.valhalla
+* adguard.valhalla
+* portainer.valhalla
 
 ## HTTPS
 
-Valhalla uses a private PKI.
+Valhalla uses a private PKI. This allows every internal service to use HTTPS without obtaining public certificates.
 
 Components:
 
@@ -188,9 +158,6 @@ Wildcard Certificate
 Internal Service
 ```
 
-This allows every internal service to use HTTPS without obtaining public certificates.
-
-
 ## Reverse Proxy
 
 Nginx Proxy Manager provides:
@@ -211,15 +178,15 @@ Vaultwarden
 ```
 
 
-## Infrastructure Services
+## Services
 
-### Homepage
+### 1. Homepage
 
 Landing page for the entire infrastructure.
 Provides quick access to every service.
 
 
-### Portainer
+### 2. Portainer
 
 Container management interface.
 
@@ -232,7 +199,7 @@ Responsibilities:
 * Volumes
 * Updates
 
-### AdGuard Home
+### 3. AdGuard Home
 
 Responsible for:
 
@@ -241,7 +208,7 @@ Responsible for:
 * Ad blocking
 * Malware filtering
 
-### Nginx Proxy Manager
+### 4. Nginx Proxy Manager
 
 Provides
 
@@ -249,11 +216,9 @@ Provides
 * Reverse Proxy
 * Certificate management
 
-## Productivity
+### 5. Vaultwarden
 
-### Vaultwarden
-
-Password manager compatible with Bitwarden.
+Password manager compatible with Bitwarden, entirely self-hosted.
 
 Stores:
 
@@ -262,23 +227,15 @@ Stores:
 * identities
 * TOTP secrets
 
-Entirely self-hosted.
 
-## Media Stack
+### 6. Jellyfin (Karkaflix)
 
-### Jellyfin (Karkaflix)
-
-Purpose:
-
-Personal Netflix replacement.
+Personal Netflix replacement for watching movies and series locally.
 
 
-### Navidrome (Karkafly)
+### 7. Navidrome (Karkafly)
 
-Personal music streaming server.
-Streams music collection from anywhere.
-
-Compatible with:
+Personal music streaming server. Streams music collection from anywhere. Compatible with:
 
 * Symfonium
 * Amperfy
@@ -287,16 +244,14 @@ Compatible with:
 
 ## Storage
 
-Media is stored separately from containers.
+Containers never contain user data. Docker volumes only store application configuration. Media is stored separately from containers.
 
+```
 /srv/media
     movies/
     series/
     music/
-
-Containers never contain user data.
-
-Docker volumes only store application configuration.
+````
 
 ## Docker Philosophy
 
@@ -364,3 +319,7 @@ Planned improvements include:
 Valhalla is an evolving infrastructure platform. A place to learn, experiment, self-host and maintain complete ownership over personal digital services.
 
 The project will continue to evolve as new services, automation and infrastructure components are added.
+
+
+
+Peace, out.
