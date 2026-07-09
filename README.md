@@ -1,325 +1,86 @@
-<h3 align="center">⚔️ VALHALLA ⚔️</h3>
-<p align="center">A secure, self-hosted homelab built around privacy, simplicity and complete infrastructure ownership.</p>
-<h1 align="center"> <img src="/images/valhalla-architecture.png" alt="Valhalla architecture"></h1>
+<h1 align="center">⚔️ VALHALLA ⚔️</h1>
+<p align="center">A self-hosted homelab focused on privacy, simplicity, and infrastructure ownership.</p>
+<h1 align="center"><img src="images/valhalla.png"></h1>
 
 ## Overview
 
-Valhalla is my personal homelab, designed from the ground up as a private cloud, media server, password manager, DNS server, reverse proxy and experimentation environment.
+Valhalla is a personal homelab for running private services at home with Docker, internal DNS, HTTPS, and remote access through Tailscale. The goal is to keep control of data, avoid public exposure, and make everyday self-hosted tools feel approachable.
 
-Unlike traditional cloud-centric deployments, Valhalla follows a self-hosting first philosophy:
+## Principles
 
-* No public services unless absolutely necessary.
-* No exposed ports to the Internet.
-* Secure remote access through Tailscale.
-* Infrastructure entirely containerized with Docker.
-* All services available through friendly DNS names.
-* Centralized HTTPS using an internal PKI.
+- no public services unless strictly necessary;
+- no router port forwarding;
+- remote access through Tailscale;
+- applications run in Docker containers;
+- friendly internal names through AdGuard Home;
+- centralized HTTPS with a private PKI;
+- persistent data stored under `/srv`.
 
-The objective is to own every layer of the stack while keeping deployment, maintenance and recovery as simple as possible.
+## What is included
 
-## Design Philosophy
+The stack currently includes:
 
-### 1. Privacy
+- Docker + Docker Compose;
+- Nginx Proxy Manager for reverse proxy and TLS;
+- AdGuard Home for internal DNS;
+- Homepage as a dashboard;
+- Vaultwarden for passwords;
+- Jellyfin and Navidrome for media;
+- Uptime Kuma for monitoring.
 
-Every critical service runs locally. Passwords, media, DNS, authentication and personal data never leave the infrastructure unless explicitly synchronized.
+## Architecture at a glance
 
-### 2. Simplicity
+A typical request flows through local DNS, the reverse proxy, and then into the appropriate container. The full design is documented in [config/00-architecture.md](config/00-architecture.md).
 
-The architecture intentionally avoids unnecessary complexity. Instead of Kubernetes, multiple virtual machines or service meshes, the project relies on:
+## Hardware
 
-* Debian
-* Docker Compose
-* Docker volumes
-* Reverse Proxy
-* Private DNS
+The stack is intentionally lightweight and can run on a Raspberry Pi, a small mini PC, a NUC, or an older desktop. The full hardware notes are in [config/01-hardware.md](config/01-hardware.md).
 
-This keeps maintenance predictable while remaining extremely powerful.
+## Documentation
 
-### 3. Security
+The repository is organized into a set of service-specific guides:
 
-Security is based on reducing attack surface rather than exposing services behind complex firewalls. Key principles include:
+- [config/00-architecture.md](config/00-architecture.md) — overall design
+- [config/01-hardware.md](config/01-hardware.md) — hardware and network
+- [config/02-os.md](config/02-os.md) — Debian host setup
+- [config/03-docker.md](config/03-docker.md) — Docker and stacks
+- [config/05-npm.md](config/05-npm.md) — reverse proxy
+- [config/06-adguard.md](config/06-adguard.md) — DNS
+- [config/07-tailscale.md](config/07-tailscale.md) — remote access
+- [config/08-homepage.md](config/08-homepage.md) — dashboard
+- [config/09-vaultwarden.md](config/09-vaultwarden.md) — password manager
+- [config/10-jellyfin.md](config/10-jellyfin.md) — media server
+- [config/11-navidrome.md](config/11-navidrome.md) — music server
+- [config/12-uptime-kuma.md](config/12-uptime-kuma.md) — monitoring
 
-* No public ports
-* No port forwarding
-* VPN-first architecture
-* HTTPS everywhere
-* Internal Certificate Authority
-* Strong passwords
-* SSH key authentication
+## Hands on
 
-## 4. Modularity
+> The docs on `config/` use neutral placeholders for security and privacy. Review them before deploying and adapt hostnames, usernames, IPs, and any service-specific values to your own environment.
 
-Every application lives inside its own Docker container. 
-New services can be added without affecting existing ones.
-Infrastructure components remain independent.
+### Install on a Debian-like Linux host
 
-## 5. Hardware
+The easiest path is to run the installer directly:
 
-Very simple and minimal hardware. It could be a Raspberry Pi even. 
-
-* CHUWI LarkBox
-* Intel Celeron J4115
-* 6 GB RAM
-* 128 GB eMMC flash (system)
-* 1 TB external HDD (storage)
-
-### Operating System
-
-The host system is intentionally minimal. Every application runs inside containers.
-
-* Debian Linux
-* Docker Engine
-* Docker Compose
-
-## High Level Architecture
-
-```
-        Internet
-            │
-            │
-      Tailscale VPN
-            │
-            ▼
-+----------------------+
-|      VALHALLA        |
-|                      |
-|  Docker Engine       |
-|                      |
-|  ┌───────────────┐   |
-|  │ Nginx Proxy   │   |
-|  └──────┬────────┘   |
-|         │            |
-| ┌───────┼──────────┐ |
-| │       │          │ |
-| | docker services  │ |
-+----------------------+
+```bash
+curl -fsSL https://raw.githubusercontent.com/k4rkarov/valhalla-homelab/main/install.sh | bash
 ```
 
-Every request enters through Nginx Proxy Manager, which terminates HTTPS and routes traffic according to the Host header.
+The installer will guide you through the setup, prepare Docker and supporting packages, create the needed directories, generate the compose configuration, and start the stack for you. During setup it will ask for a hostname, username, IP address, and an internal domain name. The default domain is `valhalla`, which is strongly recommended unless you have a specific reason to change it.
 
+If you want to review the script first, clone the repo and run it locally:
 
-## Network Architecture
-
-Remote access is provided exclusively by Tailscale. No services are directly exposed to the Internet.
-
-```
-Mac / iPhone/ iPad / Laptop
-            │
-            ▼
-    Tailscale Mesh VPN
-            │
-            ▼
-         Valhalla
-````
-
-This architecture provides:
-
-* encrypted communication
-* automatic NAT traversal
-* secure authentication
-* zero exposed ports
-
-
-## DNS Architecture
-
-DNS is provided by AdGuard Home.Instead of remembering IP addresses, every service has its own hostname. DNS rewrites map each hostname to the Valhalla server. 
-When connected through Tailscale, the same hostnames work from anywhere in the world.
-
-Examples:
-
-* homepage.valhalla
-* vault.valhalla
-* karkafy.valhalla
-* karkaflix.valhalla
-* adguard.valhalla
-* portainer.valhalla
-
-## HTTPS
-
-Valhalla uses a private PKI. This allows every internal service to use HTTPS without obtaining public certificates.
-
-Components:
-
-* Root Certificate Authority
-* Wildcard certificate (*.valhalla)
-* Nginx Proxy Manager
-
-Flow:
-
-```
-Client
-↓
-HTTPS
-↓
-Nginx Proxy Manager
-↓
-Wildcard Certificate
-↓
-Internal Service
+```bash
+git clone https://github.com/k4rkarov/valhalla-homelab.git
+cd valhalla-homelab
+./install.sh
 ```
 
-## Reverse Proxy
+Useful options:
 
-Nginx Proxy Manager provides:
-
-* Reverse Proxy
-* TLS termination
-* Host routing
-* Central certificate management
-
-Instead of exposing container ports, every service is published through HTTPS.
-
-Example:
-
-```
-https://vault.valhalla
-↓
-Vaultwarden
+```bash
+./install.sh --help
+./install.sh --check
+./install.sh --dry-run --verbose
 ```
 
-
-## Services
-
-### 1. Homepage
-
-Landing page for the entire infrastructure.
-Provides quick access to every service.
-
-
-### 2. Portainer
-
-Container management interface.
-
-Responsibilities:
-
-* Docker stack deployment
-* Logs
-* Images
-* Networks
-* Volumes
-* Updates
-
-### 3. AdGuard Home
-
-Responsible for:
-
-* Internal DNS
-* DNS rewrites
-* Ad blocking
-* Malware filtering
-
-### 4. Nginx Proxy Manager
-
-Provides
-
-* HTTPS
-* Reverse Proxy
-* Certificate management
-
-### 5. Vaultwarden
-
-Password manager compatible with Bitwarden, entirely self-hosted.
-
-Stores:
-
-* passwords
-* secure notes
-* identities
-* TOTP secrets
-
-
-### 6. Jellyfin (Karkaflix)
-
-Personal Netflix replacement for watching movies and series locally.
-
-
-### 7. Navidrome (Karkafly)
-
-Personal music streaming server. Streams music collection from anywhere. Compatible with:
-
-* Symfonium
-* Amperfy
-* Tempo
-* Substreamer
-
-## Storage
-
-Containers never contain user data. Docker volumes only store application configuration. Media is stored separately from containers.
-
-```
-/srv/media
-    movies/
-    series/
-    music/
-````
-
-## Docker Philosophy
-
-Applications are grouped by purpose. Examples:
-
-```
-Infrastructure
-Media
-Utilities
-````
-
-Future services can be deployed independently.
-
-
-## Security Model
-
-Valhalla intentionally avoids exposing services publicly.
-
-Security is based on:
-
-* Tailscale authentication
-* WireGuard encryption
-* Private DNS
-* HTTPS
-* Internal CA
-* SSH keys
-* No public ports
-
-## Why Not Cloud?
-
-Because data ownership matters. Every important service is under complete control. No subscriptions. No monthly fees. No telemetry. No dependency on third-party providers (also because the whole valhala's *raison d'être* is the creation of the project in itself).
-
-## Future Roadmap
-
-Planned improvements include:
-
-* VPS integration
-* Automated backups
-* Infrastructure monitoring
-* GitHub Actions deployment
-* Infrastructure as Code
-* Automated certificate renewal
-* Documentation website
-* Secret management improvements
-
-## Technology Stack (for now)
-
-
-|Component|Purpose|
-|----|----|
-|Debian	|Operating System|
-|Docker	|Container Runtime|
-|Docker |Compose	Orchestration|
-|Portainer	|Container Management|
-|Nginx Proxy Manager|	Reverse Proxy|
-|AdGuard Home	|DNS|
-|Tailscale	|VPN|
-|Homepage	|Dashboard|
-|Vaultwarden|	Password Manager|
-|Jellyfin (karkaflix)	|Media Server|
-|Navidrome (karkafy)	|Music Server|
-
-## Goals
-
-Valhalla is an evolving infrastructure platform. A place to learn, experiment, self-host and maintain complete ownership over personal digital services.
-
-The project will continue to evolve as new services, automation and infrastructure components are added.
-
-
-
-Peace, out.
+If you want help from an AI while installing, the repository includes [ai-context.md](ai-context.md), which summarizes the installer flow and the most important deployment details.
