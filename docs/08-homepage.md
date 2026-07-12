@@ -36,7 +36,7 @@ This avoids relying on memory for ports, IPs, or individual URLs.
 Location:
 
 ```text
-config/docker-compose-stacks/infra.yaml
+docker/infra/compose.yml
 ```
 
 Image:

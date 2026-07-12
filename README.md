@@ -1,6 +1,6 @@
 <h1 align="center">⚔️ VALHALLA ⚔️</h1>
 <p align="center">A self-hosted homelab focused on privacy, simplicity, and infrastructure ownership.</p>
-<h1 align="center"><img src="images/valhalla.png"></h1>
+<h1 align="center"><img src="assets/images/valhalla.png"></h1>
 
 ## Overview
 
@@ -26,32 +26,43 @@ The stack currently includes:
 - Homepage as a dashboard;
 - Vaultwarden for passwords;
 - Jellyfin and Navidrome for media;
-- Uptime Kuma for monitoring.
+- Uptime Kuma for monitoring;
+- Portainer for management.
+
+## ⚠️ A Note on Infrastructure Management
+
+Valhalla uses Docker Compose for reproducible deployments. While **Portainer** is included for convenient visualization and troubleshooting, please note the following:
+
+- **Source of Truth:** The `compose.yml` files in this repository are the primary source of truth for your infrastructure.
+- **Manual Changes:** Any changes made directly via the Portainer interface (e.g., stopping containers, editing environment variables) will **not** be reflected in your repository files.
+- **Persistence:** If you run `./install.sh` again, your manual changes in Portainer may be overwritten to match the repository configuration. 
+
+For permanent changes, please edit the corresponding `compose.yml` file and re-run the installer.
 
 ## Architecture at a glance
 
-A typical request flows through local DNS, the reverse proxy, and then into the appropriate container. The full design is documented in [config/00-architecture.md](config/00-architecture.md).
+A typical request flows through local DNS, the reverse proxy, and then into the appropriate container. The full design is documented in [documentation/00-architecture.md](documentation/00-architecture.md).
 
 ## Hardware
 
-The stack is intentionally lightweight and can run on a Raspberry Pi, a small mini PC, a NUC, or an older desktop. The full hardware notes are in [config/01-hardware.md](config/01-hardware.md).
+The stack is intentionally lightweight and can run on a Raspberry Pi, a small mini PC, a NUC, or an older desktop. The full hardware notes are in [documentation/01-hardware.md](documentation/01-hardware.md).
 
 ## Documentation
 
 The repository is organized into a set of service-specific guides:
 
-- [config/00-architecture.md](config/00-architecture.md) — overall design
-- [config/01-hardware.md](config/01-hardware.md) — hardware and network
-- [config/02-os.md](config/02-os.md) — Debian host setup
-- [config/03-docker.md](config/03-docker.md) — Docker and stacks
-- [config/05-npm.md](config/05-npm.md) — reverse proxy
-- [config/06-adguard.md](config/06-adguard.md) — DNS
-- [config/07-tailscale.md](config/07-tailscale.md) — remote access
-- [config/08-homepage.md](config/08-homepage.md) — dashboard
-- [config/09-vaultwarden.md](config/09-vaultwarden.md) — password manager
-- [config/10-jellyfin.md](config/10-jellyfin.md) — media server
-- [config/11-navidrome.md](config/11-navidrome.md) — music server
-- [config/12-uptime-kuma.md](config/12-uptime-kuma.md) — monitoring
+- [documentation/00-architecture.md](documentation/00-architecture.md) — overall design
+- [documentation/01-hardware.md](documentation/01-hardware.md) — hardware and network
+- [documentation/02-os.md](documentation/02-os.md) — Debian host setup
+- [documentation/03-docker.md](documentation/03-docker.md) — Docker and stacks
+- [documentation/05-npm.md](documentation/05-npm.md) — reverse proxy
+- [documentation/06-adguard.md](documentation/06-adguard.md) — DNS
+- [documentation/07-tailscale.md](documentation/07-tailscale.md) — remote access
+- [documentation/08-homepage.md](documentation/08-homepage.md) — dashboard
+- [documentation/09-vaultwarden.md](documentation/09-vaultwarden.md) — password manager
+- [documentation/10-jellyfin.md](documentation/10-jellyfin.md) — media server
+- [documentation/11-navidrome.md](documentation/11-navidrome.md) — music server
+- [documentation/12-uptime-kuma.md](documentation/12-uptime-kuma.md) — monitoring
 
 ## Hands on
 

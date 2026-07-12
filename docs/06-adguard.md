@@ -40,7 +40,7 @@ Client
 Location:
 
 ```text
-config/docker-compose-stacks/network.yaml
+docker/network/compose.yml
 ```
 
 Image:

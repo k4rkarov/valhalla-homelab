@@ -59,7 +59,7 @@ NPM was chosen because it provides:
 Location:
 
 ```text
-config/docker-compose-stacks/proxy.yaml
+docker/proxy/compose.yml
 ```
 
 Image:

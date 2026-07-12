@@ -190,6 +190,36 @@ check_hardware_requirements() {
   fi
 }
 
+check_ports() {
+  local ports=(80 443 53)
+  log "Verifying if ports are free..."
+  for port in "${ports[@]}"; do
+    if ss -tuln 2>/dev/null | grep -q ":$port "; then
+      log "WARNING: Port $port is already in use. This may cause conflicts with the proxy or DNS stacks."
+    fi
+  done
+}
+
+check_disk_space() {
+  local min_gb=5
+  local available_gb
+  # Get available GB for / (or wherever /srv is mounted)
+  available_gb=$(df -BG /srv 2>/dev/null | awk 'NR==2 {print substr($4, 1, length($4)-1)}')
+  if [[ -z "$available_gb" ]]; then available_gb=100; fi # Fallback if /srv is not a separate mount
+  if (( available_gb < min_gb )); then
+    log "ERROR: Less than ${min_gb}GB available on /srv. Please free up space."
+    exit 1
+  fi
+}
+
+check_connectivity() {
+  log "Verifying internet connectivity..."
+  if ! curl -Is http://google.com | head -n 1 | grep -q "200"; then
+    log "ERROR: No internet connectivity detected."
+    exit 1
+  fi
+}
+
 prompt_for_configuration() {
   local detected_hostname detected_username detected_ip default_domain
   detected_hostname="$(detect_hostname)"
@@ -402,6 +432,9 @@ fi
 
 if [[ "$CHECK_ONLY" -eq 0 ]]; then
   check_hardware_requirements
+  check_ports
+  check_disk_space
+  check_connectivity
 fi
 
 if [[ "$CHECK_ONLY" -eq 0 ]]; then
@@ -419,16 +452,16 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$SCRIPT_DIR"
 
-if [[ ! -d "$REPO_ROOT/config/docker-compose-stacks" ]]; then
+if [[ ! -d "$REPO_ROOT/docker" ]]; then
   for candidate in "$HOME/valhalla-homelab" "$HOME/Documents/github/valhalla-homelab" "$PWD"; do
-    if [[ -d "$candidate/config/docker-compose-stacks" ]]; then
+    if [[ -d "$candidate/docker" ]]; then
       REPO_ROOT="$candidate"
       break
     fi
   done
 fi
 
-if [[ ! -d "$REPO_ROOT/config/docker-compose-stacks" ]]; then
+if [[ ! -d "$REPO_ROOT/docker" ]]; then
   echo "Unable to locate the Valhalla repository. Place this script inside the repository and try again." >&2
   exit 1
 fi
@@ -532,7 +565,7 @@ prepare_directories() {
     /srv/docker/infra \
     /srv/docker/proxy \
     /srv/docker/network \
-    /srv/docker/security \
+    /srv/docker/security/kali \
     /srv/docker/media \
     /srv/media/movies \
     /srv/media/series \
@@ -574,8 +607,13 @@ prepare_compose_files() {
       log "Backing up existing compose file to $backup"
       run_logged mv "$target" "$backup"
     fi
-    render_compose_template "$REPO_ROOT/config/docker-compose-stacks/${stack}.yaml" "$target"
+    render_compose_template "$REPO_ROOT/docker/$stack/compose.yml" "$target"
   done
+
+  if [[ -d "$REPO_ROOT/docker/security/kali" ]]; then
+    run_privileged mkdir -p "/srv/docker/security/kali"
+    run_privileged cp "$REPO_ROOT/docker/security/kali/Dockerfile" "/srv/docker/security/kali/Dockerfile"
+  fi
 }
 
 compose_up() {

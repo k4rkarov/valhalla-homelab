@@ -51,7 +51,7 @@ Portainer does not run the applications itself. It manages the Docker Engine.
 
 ## Docker Compose
 
-Portainer is documented here as an administration option, but it is not currently part of the functional stack files under `config/docker-compose-stacks/`.
+Portainer is documented here as an administration option, but it is not currently part of the functional stack files under `docker/`.
 
 Image:
 
@@ -115,7 +115,7 @@ https://portainer.valhalla
 
 ## Stack Organization
 
-The functional stacks currently tracked in `config/docker-compose-stacks/` are:
+The functional stacks currently tracked in `docker/` are:
 
 - `infra`;
 - `proxy`;

@@ -17,7 +17,7 @@ It provides a streaming-like experience using locally stored files controlled by
 Location:
 
 ```text
-config/docker-compose-stacks/media.yaml
+docker/media/compose.yml
 ```
 
 Image:

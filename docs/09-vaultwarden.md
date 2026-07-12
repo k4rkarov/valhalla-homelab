@@ -36,7 +36,7 @@ Credentials for new homelab services should be registered here.
 Location:
 
 ```text
-config/docker-compose-stacks/security.yaml
+docker/security/compose.yml
 ```
 
 Image:

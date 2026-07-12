@@ -10,12 +10,14 @@ Valhalla is a self-hosted homelab stack for Debian-like Linux hosts. It is desig
 
 - README.md — high-level overview and quick start.
 - install.sh — automated installer and verification entrypoint.
-- config/ — service documentation and Docker Compose stack definitions.
-  - config/docker-compose-stacks/infra.yaml
-  - config/docker-compose-stacks/proxy.yaml
-  - config/docker-compose-stacks/network.yaml
-  - config/docker-compose-stacks/security.yaml
-  - config/docker-compose-stacks/media.yaml
+- documentation/ — service documentation and deployment guides.
+- docker/ — Docker Compose stack definitions and related build context.
+  - docker/infra/compose.yml
+  - docker/proxy/compose.yml
+  - docker/network/compose.yml
+  - docker/security/compose.yml
+  - docker/media/compose.yml
+  - docker/security/kali/Dockerfile
 - images/ — screenshots and artwork used by the docs.
 
 ## Install script behavior
@@ -54,7 +56,7 @@ The installer is implemented in install.sh and should be treated as the primary 
 
 ## Compose stack layout
 
-The runtime stack definitions live under config/docker-compose-stacks and are copied into /srv/docker/<stack>/compose.yml by the installer.
+The runtime stack definitions live under docker/<stack>/compose.yml and are copied into /srv/docker/<stack>/compose.yml by the installer.
 
 The current stack groups are:
 

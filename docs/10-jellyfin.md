@@ -17,7 +17,7 @@ It organizes movies, series, metadata, posters, summaries, cast information, and
 Location:
 
 ```text
-config/docker-compose-stacks/media.yaml
+docker/media/compose.yml
 ```
 
 Image:

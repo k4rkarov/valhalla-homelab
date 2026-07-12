@@ -37,18 +37,87 @@ All Docker containers run on this machine.
 
 ## Hardware choice and its specs
 
-<p align=center><img src="../images/larkbox.png" width="50%"></p>
+<img src="../assets/images/larkbox.png" width="250px">
 
 | Item | Specification |
 | --- | --- |
 | Model | CHUWI LarkBox |
 | CPU | Intel Celeron J4115 |
 | Architecture | x86_64 |
-| Memory | 6 GB DDR4 |
+| Memory | 6 GB LPDDR4 |
 | Internal disk | 128 GB eMMC |
-| Expansion | M.2 SSD slot |
-| Network | Gigabit Ethernet |
-| Wi-Fi | Integrated |
+| Expansion | slot for SSD M.2 2242 (22 × 42 mm) SATA III (6 Gb/s) NGFF |
+| Connectivity | Intel Wireless-AC 9461, 802.11ac, Bluetooth 5.0 |
+| Graphics | Intel UHD Graphics 600 |
+| Ports | 2x USB3.0, 1x USB-C, 1x HDMI, audio jack, MicroSD card reader |
+| Weight | 127g |
+| Size | 61 x 61 x 43mm (LxWxH) |
+
+
+<details>
+<summary>Hardware Limitations</summary>
+
+While the homelab was built using a **Chuwi LarkBox**, these limitations may also apply to other low-cost mini PCs depending on their firmware and hardware implementation.
+
+### USB Power in S5 (Soft Off)
+
+One unexpected behavior is that the USB ports remain powered after the operating system has been shut down (`poweroff`).
+
+As a result:
+
+- External HDDs and SSDs continue receiving 5V power.
+- Mechanical HDDs may continue spinning even after the server has been turned off.
+- This behavior is controlled by the motherboard firmware (BIOS/Embedded Controller), **not by Linux**.
+
+Attempts to disable USB power from the operating system were unsuccessful because, once the kernel shuts down, power management is entirely handled by the firmware. The BIOS used on the device is a generic one, and its options do not really work.
+
+### Wake-on-LAN
+
+The homelab was mostly made to work via Wi-Fi, mainly because the Chiwi Larkbox does't have an Ethernet port. However, an `ASIX AX88179` USB-to-Gigabit Ethernet adapter was used to investigate the existence of a WoL functionality.
+
+The adapter itself supports Wake-on-LAN:
+
+```text
+Supports Wake-on: pg
+Wake-on: g
+```
+
+However, Wake-on-LAN still does **not** function after the system is powered off.
+
+The reason is that although the USB ports continue supplying 5V standby power, the USB controller itself is no longer active after entering the S5 power state. The Ethernet adapter loses its link, preventing it from receiving Magic Packets.
+
+In other words:
+
+- ✅ The Ethernet adapter supports Wake-on-LAN.
+- ✅ Linux can enable Wake-on-LAN.
+- ❌ The firmware does not keep the USB Ethernet adapter operational after shutdown.
+
+This appears to be a firmware limitation rather than a Linux configuration issue.
+
+### USB Port Power Control
+
+The system was also tested with `uhubctl`, which can disable power on USB ports that support per-port power switching.
+
+```bash
+sudo uhubctl
+```
+
+Result:
+
+```text
+No compatible devices detected!
+```
+
+This indicates that the USB controller does not expose software-controlled port power switching.
+
+### Practical Workaround
+
+Because the firmware keeps USB ports powered after shutdown and does not support Wake-on-LAN through a USB Ethernet adapter, the most practical solutions are:
+
+- Leave the server running 24/7 (recommended for always-on homelabs).
+- Use a smart plug to completely remove power when the server is intentionally shut down.
+- Next time choose hardware with native Ethernet, BIOS support for Wake-on-LAN, and configurable USB power management if remote power control is a requirement.
+</details>
 
 ---
 

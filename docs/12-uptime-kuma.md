@@ -34,7 +34,7 @@ When configured, it can send notifications through external providers.
 Location:
 
 ```text
-config/docker-compose-stacks/infra.yaml
+docker/infra/compose.yml
 ```
 
 Image:
