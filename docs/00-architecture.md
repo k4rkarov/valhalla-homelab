@@ -127,6 +127,26 @@ Local records are maintained as DNS Rewrites in AdGuard Home.
 
 Every name points to the same server. Nginx Proxy Manager decides the final destination.
 
+### Static IP Reservation and Internal DNS Strategy
+A stable IP address is a fundamental requirement for any server running infrastructure services.
+The Valhalla server uses a DHCP reservation configured on the router, ensuring that the same IP address is always assigned to the same network interface. This approach provides the benefits of a static IP while keeping network management centralized through the router's DHCP service.
+A fixed IP is required because several services depend on predictable addressing, including:
+
+- AdGuard Home
+- Internal DNS records
+- Nginx Proxy Manager
+- Docker services
+- HTTPS certificates
+- Local service discovery
+
+Enter on the router's DHCP settings and create a reservation for the Valhalla server's MAC address:
+
+| Hostname | MAC Address | IP Address |
+| --- | --- | --- |
+| `valhalla` | `ee:ab:2b:9c:e4:0b` | `192.168.1.50` |
+
+Without a reserved IP, the server address could change after a reboot or DHCP lease renewal, causing service disruptions and requiring manual updates across the environment.
+
 ---
 
 ## HTTPS
