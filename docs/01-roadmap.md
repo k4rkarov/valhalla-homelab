@@ -109,61 +109,6 @@ Remaining tasks:
 
 ---
 
-# Security
-
-## CrowdSec
-
-Planned to protect Nginx Proxy Manager.
-
-Benefits:
-
-- Automatic blocking of scanners
-- Brute-force mitigation
-- Shared threat intelligence
-- Bot protection
-
----
-
-## Fail2ban
-
-May be introduced if additional services are exposed publicly.
-
----
-
-## Wazuh
-
-Potential SIEM integration.
-
-Objectives:
-
-- Centralized log monitoring
-- Event correlation
-- Auditing
-- Incident detection
-
----
-
-## Suricata
-
-Potential IDS/IPS deployment for network monitoring.
-
----
-
-# Observability
-
-Netdata has been removed from the infrastructure.
-
-If more advanced monitoring becomes necessary, the following stack may be adopted:
-
-- Prometheus
-- Grafana
-- Loki
-- Promtail
-
-At the moment, operational monitoring is primarily performed through standard Linux tools and the command line.
-
----
-
 # Automation
 
 Administrative scripts will be developed to simplify routine maintenance.
@@ -197,41 +142,10 @@ Planned upgrades:
 
 ---
 
-# Current Services
-
-## Infrastructure
-
-- Debian
-- Docker
-- Docker Compose
-- Portainer
-- Nginx Proxy Manager
-- AdGuard Home
-- Homepage
-- Tailscale
-
-## Security
-
-- Vaultwarden
-- Kali Linux
-
-## Media
-
-- Jellyfin
-- Navidrome
-
-## Monitoring
-
-- Uptime Kuma
-
----
-
 # Planned Services
 
 The following applications may be added in the future:
 
-- Forgejo
-- Gitea
 - Immich
 - Paperless-ngx
 - Stirling PDF
