@@ -1,6 +1,6 @@
 # Valhalla Homelab Roadmap
 
-This document outlines the official roadmap for the **Valhalla Homelab** project, including completed milestones, planned improvements, and long-term goals. It serves as a reference for the project's evolution, with a focus on security, reliability, automation, and documentation.
+This document outlines the official roadmap for the **Valhalla Homelab** project, including completed milestones, planned improvements, and long-term goals. It serves as a reference for the project's evolution, with a focus on security, reliability, automation, documentation, and infrastructure reproducibility.
 
 ---
 
@@ -26,6 +26,7 @@ This document outlines the official roadmap for the **Valhalla Homelab** project
 | Tailscale Subnet Router | ✅ Completed |
 | Documentation | 🚧 In Progress |
 | Automated Backups | ⏳ Planned |
+| Infrastructure Hardening | ⏳ Planned |
 | VPS Integration | ⏳ Planned |
 
 ---
@@ -47,6 +48,48 @@ Primary objectives:
 - Simulate real-world attack scenarios.
 
 Keeping the VPS isolated ensures that experimentation and offensive activities remain completely independent from the production homelab while providing a realistic environment for professional security testing.
+
+---
+
+# Infrastructure Hardening
+
+Planned improvements:
+
+- Dedicated non-privileged service account for containerized services.
+- Migration of infrastructure files to `/srv`.
+- Docker hardening and privilege minimization.
+- Container network segmentation.
+- Restore and disaster recovery procedures.
+- Periodic internal security assessments.
+- Reduced attack surface for publicly exposed services.
+- Future implementation of Docker rootless mode (if operationally viable).
+
+The primary objective is to separate infrastructure management from day-to-day administration while minimizing the privileges required by services running on the host system.
+
+---
+
+# Infrastructure Layout
+
+```text
+/srv/
+
+docker/
+configs/
+backups/
+scripts/
+security/
+documentation/
+```
+
+Future Docker structure:
+
+```text
+/srv/docker/
+
+compose/
+volumes/
+configs/
+```
 
 ---
 
@@ -83,13 +126,14 @@ Backup destinations:
 
 - External HDD
 - NAS (future)
-- Cloud storage (Backblaze B2 or equivalent)
+- Cloud storage? (Backblaze B2 or equivalent)
 
 Objectives:
 
-- Fast disaster recovery
-- Full infrastructure restoration
-- Backup versioning
+- Fast disaster recovery.
+- Full infrastructure restoration.
+- Backup versioning.
+- Tested restore procedures.
 
 ---
 
@@ -99,13 +143,13 @@ The GitHub repository will serve as the project's central source of documentatio
 
 Remaining tasks:
 
-- Final README
-- Updated screenshots
-- Infrastructure diagrams
-- Complete technical documentation
-- Version history
-- Releases
-- Changelog
+- Final README.
+- Updated screenshots.
+- Infrastructure diagrams.
+- Complete technical documentation.
+- Version history.
+- Releases.
+- Changelog.
 
 ---
 
@@ -125,20 +169,28 @@ certificate-renew.sh
 
 These scripts may later be scheduled using cron.
 
+Future objectives:
+
+- Automated updates.
+- Infrastructure health checks.
+- Backup validation.
+- Service status reporting.
+- Maintenance automation.
+
 ---
 
 # Storage
 
 Current configuration:
 
-- Internal SSD
+- Internal SSD.
 
 Planned upgrades:
 
-- Larger M.2 SSD
-- External HDD
-- NAS
-- RAID (if needed)
+- Larger M.2 SSD.
+- External HDD.
+- NAS.
+- RAID (if operationally required).
 
 ---
 
@@ -155,7 +207,7 @@ The following applications may be added in the future:
 - File Browser
 - RustDesk Server
 
-New services will be added based on operational needs.
+New services will be added only when justified by operational needs.
 
 ---
 
@@ -204,7 +256,13 @@ Possible future additions:
 - Burp Suite Community
 - Metasploit Framework
 
-The objective is to maintain a persistent and isolated environment for learning, proof-of-concept development, scripting, and security assessments.
+Objectives:
+
+- Maintain a persistent offensive security environment.
+- Perform internal security assessments.
+- Develop proof-of-concept exploits.
+- Study network security and attack methodologies.
+- Document findings and experiments.
 
 ---
 
@@ -212,14 +270,14 @@ The objective is to maintain a persistent and isolated environment for learning,
 
 Already implemented:
 
-- Private Root Certificate Authority
-- Wildcard certificate (`*.valhalla`)
-- CA deployment to trusted devices
+- Private Root Certificate Authority.
+- Wildcard certificate (`*.valhalla`).
+- CA deployment to trusted devices.
 
 Future improvements:
 
-- Automated certificate renewal
-- Complete issuance documentation
+- Automated certificate renewal.
+- Complete issuance documentation.
 
 ---
 
@@ -227,19 +285,19 @@ Future improvements:
 
 Implemented:
 
-- AdGuard Home
-- DNS Rewrites
-- Split DNS
-- Tailscale integration
-- Tailscale Subnet Router
+- AdGuard Home.
+- DNS Rewrites.
+- Split DNS.
+- Tailscale integration.
+- Tailscale Subnet Router.
 
 Future improvements:
 
-- DHCP via AdGuard Home
-- DNS-over-HTTPS (DoH)
-- DNS-over-TLS (DoT)
-- Multiple upstream resolvers
-- Automatic failover
+- DHCP via AdGuard Home.
+- DNS-over-HTTPS (DoH).
+- DNS-over-TLS (DoT).
+- Multiple upstream resolvers.
+- Automatic failover.
 
 ---
 
@@ -247,10 +305,11 @@ Future improvements:
 
 Planned improvements:
 
-- IoT VLAN
-- Guest VLAN
-- Server VLAN
-- Replace the ISP router with a more capable solution (MikroTik, UniFi, or OPNsense)
+- IoT VLAN.
+- Guest VLAN.
+- Server VLAN.
+- Replace the ISP router with a more capable solution (MikroTik, UniFi, OPNsense or TP-Link AX23).
+- Future network segmentation improvements.
 
 ---
 
@@ -288,16 +347,20 @@ troubleshooting.md
 
 Version 1.0 will be considered complete when the project includes:
 
-- A mature Docker-based infrastructure
-- Fully functional internal DNS
-- HTTPS across all services
-- Private certificate authority
-- Centralized management through Portainer
-- Secure remote access via Tailscale
-- Tailscale Subnet Router
-- Complete documentation
-- Automated backup solution
-- VPS integration
+- A mature Docker-based infrastructure.
+- Fully functional internal DNS.
+- HTTPS across all services.
+- Private certificate authority.
+- Centralized management through Portainer.
+- Secure remote access via Tailscale.
+- Tailscale Subnet Router.
+- Complete technical documentation.
+- Automated and tested backup procedures.
+- Full disaster recovery documentation.
+- Dedicated infrastructure directories under `/srv`.
+- Infrastructure hardening and privilege separation.
+- A dedicated and isolated offensive security environment.
+- An isolated VPS dedicated exclusively to penetration testing activities.
 
 ---
 
@@ -306,3 +369,61 @@ Version 1.0 will be considered complete when the project includes:
 Valhalla is more than a homelab. It is a personal infrastructure platform designed for continuous learning, automation, offensive and defensive security, self-hosting, and professional development.
 
 The long-term objective is to maintain a modular, reproducible, well-documented, and resilient environment that can be fully rebuilt from the GitHub repository and versioned backups.
+
+---
+
+# Project Phases
+
+## PHASE 1 - Infrastructure Consolidation (Current)
+
+- [ ] Automated Backups.
+- [ ] Complete Documentation.
+- [ ] Administrative Scripts.
+- [ ] Infrastructure Hardening.
+- [ ] Restore Procedures Documentation.
+- [ ] Disaster Recovery Procedures.
+- [ ] Internal Pentesting Documentation.
+
+---
+
+## PHASE 2 - Infrastructure Improvements
+
+- [ ] Dedicated non-privileged service account.
+- [ ] Migration to `/srv`.
+- [ ] Docker privilege minimization.
+- [ ] Container network segmentation.
+- [ ] DNS Improvements.
+- [ ] Monitoring Improvements.
+
+---
+
+## PHASE 3 - Offensive Security Improvements
+
+- [ ] Kali Linux Improvements.
+- [ ] Pentesting Tooling Improvements.
+- [ ] Internal Security Assessments.
+- [ ] Offensive Security Environment Improvements.
+- [ ] Isolated Pentest VPS.
+
+---
+
+## PHASE 4 - Additional Services
+
+- [ ] Immich.
+- [ ] Paperless-ngx.
+- [ ] Stirling PDF.
+- [ ] IT-Tools.
+- [ ] Excalidraw.
+- [ ] Dozzle.
+- [ ] File Browser.
+- [ ] RustDesk Server.
+
+---
+
+## PHASE 5 - Hardware Improvements
+
+- [ ] TP-Link AX23.
+- [ ] Larger M.2 SSD.
+- [ ] NAS Integration.
+- [ ] Proxmox Evaluation.
+- [ ] Future VLAN Implementation.
